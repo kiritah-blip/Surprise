@@ -24,7 +24,7 @@
             margin-bottom: 30px;
             padding: 0 20px;
             height: 100px;
-            transition: all 0.3s;
+            z-index: 1;
         }
 
         .buttons {
@@ -43,17 +43,11 @@
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: transform 0.2s ease;
+            transition: transform 0.2s;
         }
 
-        #btnOui { background-color: #ff4757; color: white; z-index: 10; }
-        #btnNon { 
-            background-color: #747d8c; 
-            color: white; 
-            position: relative; 
-            z-index: 5;
-            transition: all 0.15s ease-out; /* Mouvement fluide */
-        }
+        #btnOui { background-color: #ff4757; color: white; z-index: 100; position: relative; }
+        #btnNon { background-color: #747d8c; color: white; position: relative; z-index: 50; }
 
         #messageFinal {
             display: none;
@@ -64,6 +58,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             max-width: 85%;
             animation: pop 0.8s ease-out;
+            z-index: 200;
         }
 
         .final-title { font-size: 2.2rem; color: #ff4757; margin-bottom: 15px; }
@@ -79,6 +74,7 @@
             position: absolute;
             width: 8px; height: 8px;
             animation: fall 3s linear forwards;
+            z-index: 150;
         }
 
         @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
@@ -118,22 +114,27 @@
 
         const phrasesNon = [
             "T'es sérieuse ? 🥺",
-            "Entre collègue de Bafa tu peux bien me pardonner 😉",
+            "Même avec ton BAFA tu ne peux pas être aussi dure ! 😉",
             "Je siffle la fin de la récré, m'dame la surveillante !",
             "T'as grandi à Strasbourg, t'as le cœur tendre normalement !",
             "Le héros de ton livre dirait OUI, c'est certain !",
-            "Dernière chance : on fait la paix ? ✨"
+            "Entre collègue de Bafa tu peux bien me pardonner 😉"
         ];
 
         function faisLeSenfuir() {
-            // On calcule les limites de l'écran avec une marge de sécurité
-            const padding = 20;
-            const maxX = window.innerWidth - btnNon.offsetWidth - padding;
-            const maxY = window.innerHeight - btnNon.offsetHeight - padding;
-
-            // Génération de coordonnées aléatoires sécurisées
-            const newX = Math.max(padding, Math.floor(Math.random() * maxX));
-            const newY = Math.max(padding, Math.floor(Math.random() * maxY));
+            const margin = 100;
+            const ouiRect = btnOui.getBoundingClientRect();
+            let newX, newY;
+            
+            // On cherche une position qui n'est pas sur le bouton Oui
+            do {
+                newX = Math.random() * (window.innerWidth - btnNon.offsetWidth - margin);
+                newY = Math.random() * (window.innerHeight - btnNon.offsetHeight - margin);
+            } while (
+                // Tant que la position est trop proche du centre (bouton Oui)
+                Math.abs(newX - (window.innerWidth/2)) < 200 && 
+                Math.abs(newY - (window.innerHeight/2)) < 200
+            );
 
             btnNon.style.position = 'fixed';
             btnNon.style.left = newX + 'px';
@@ -142,20 +143,17 @@
 
         btnNon.addEventListener('click', () => {
             if (clickCount < phrasesNon.length) {
-                question.innerText = phrasesNon[clickCount];
+                question.innerHTML = phrasesNon[clickCount];
                 scaleOui += 0.4;
                 btnOui.style.transform = `scale(${scaleOui})`;
                 clickCount++;
                 
-                // Si on a atteint la toute dernière phrase (BAFA)
                 if (clickCount === phrasesNon.length) {
-                    question.innerHTML = "Entre collègue de Bafa tu peux bien me pardonner 😉";
                     faisLeSenfuir();
                 }
             }
         });
 
-        // Esquive infinie dès que la dernière phrase est atteinte
         btnNon.addEventListener('mouseover', () => {
             if (clickCount >= phrasesNon.length) {
                 faisLeSenfuir();
