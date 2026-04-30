@@ -23,7 +23,7 @@
             color: #333;
             margin-bottom: 30px;
             padding: 0 20px;
-            height: 80px;
+            height: 100px;
             transition: all 0.3s;
         }
 
@@ -33,7 +33,6 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            height: 100px;
         }
 
         button {
@@ -44,11 +43,17 @@
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
+            transition: transform 0.2s ease;
         }
 
         #btnOui { background-color: #ff4757; color: white; z-index: 10; }
-        #btnNon { background-color: #747d8c; color: white; position: relative; z-index: 5; }
+        #btnNon { 
+            background-color: #747d8c; 
+            color: white; 
+            position: relative; 
+            z-index: 5;
+            transition: all 0.15s ease-out; /* Mouvement fluide */
+        }
 
         #messageFinal {
             display: none;
@@ -113,41 +118,44 @@
 
         const phrasesNon = [
             "T'es sérieuse ? 🥺",
-            "Même avec ton BAFA tu ne peux pas être aussi dure ! 😉",
+            "Entre collègue de Bafa tu peux bien me pardonner 😉",
             "Je siffle la fin de la récré, m'dame la surveillante !",
             "T'as grandi à Strasbourg, t'as le cœur tendre normalement !",
             "Le héros de ton livre dirait OUI, c'est certain !",
-            "Entre collègue de Bafa tu peux bien me pardonner 😉"
+            "Dernière chance : on fait la paix ? ✨"
         ];
 
         function faisLeSenfuir() {
-            const padding = 100;
-            const x = Math.random() * (window.innerWidth - btnNon.offsetWidth - padding);
-            const y = Math.random() * (window.innerHeight - btnNon.offsetHeight - padding);
+            // On calcule les limites de l'écran avec une marge de sécurité
+            const padding = 20;
+            const maxX = window.innerWidth - btnNon.offsetWidth - padding;
+            const maxY = window.innerHeight - btnNon.offsetHeight - padding;
+
+            // Génération de coordonnées aléatoires sécurisées
+            const newX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const newY = Math.max(padding, Math.floor(Math.random() * maxY));
+
             btnNon.style.position = 'fixed';
-            btnNon.style.left = x + 'px';
-            btnNon.style.top = y + 'px';
+            btnNon.style.left = newX + 'px';
+            btnNon.style.top = newY + 'px';
         }
 
         btnNon.addEventListener('click', () => {
             if (clickCount < phrasesNon.length) {
-                // On change le texte
                 question.innerText = phrasesNon[clickCount];
-                
-                // On fait grossir le OUI
                 scaleOui += 0.4;
                 btnOui.style.transform = `scale(${scaleOui})`;
-                
                 clickCount++;
                 
-                // Si on vient d'afficher la dernière phrase, on active l'esquive
+                // Si on a atteint la toute dernière phrase (BAFA)
                 if (clickCount === phrasesNon.length) {
+                    question.innerHTML = "Entre collègue de Bafa tu peux bien me pardonner 😉";
                     faisLeSenfuir();
                 }
             }
         });
 
-        // L'esquive au survol : Active SEULEMENT à la dernière phrase
+        // Esquive infinie dès que la dernière phrase est atteinte
         btnNon.addEventListener('mouseover', () => {
             if (clickCount >= phrasesNon.length) {
                 faisLeSenfuir();
