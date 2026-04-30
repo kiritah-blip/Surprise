@@ -110,27 +110,13 @@
 
         const phrasesNon = [
             "T'es sérieuse ? 🥺",
-            "Même avec ton BAFA tu ne peux pas être aussi dure ! 😉",
+            "Entre collègue de Bafa tu peux bien me pardonner 😉",
             "Je siffle la fin de la récré, m'dame la surveillante !",
             "Allez, dis OUI pour le Border Collie !",
             "T'as grandi à Strasbourg, t'as le cœur tendre normalement !",
             "Ok, je t'envoie un Loup Tchécoslovaque pour te convaincre...",
             "Le héros de ton livre dirait OUI, c'est certain !"
         ];
-
-        btnNon.addEventListener('click', () => {
-            scaleOui += 0.5;
-            btnOui.style.transform = `scale(${scaleOui})`;
-            if (clickCount < phrasesNon.length) {
-                question.innerText = phrasesNon[clickCount];
-            }
-            clickCount++;
-            faisLeSenfuir();
-        });
-
-        btnNon.addEventListener('mouseover', () => {
-            if (clickCount > 1) faisLeSenfuir();
-        });
 
         function faisLeSenfuir() {
             const padding = 50;
@@ -140,6 +126,23 @@
             btnNon.style.left = x + 'px';
             btnNon.style.top = y + 'px';
         }
+
+        btnNon.addEventListener('click', () => {
+            scaleOui += 0.5;
+            btnOui.style.transform = `scale(${scaleOui})`;
+            
+            if (clickCount < phrasesNon.length) {
+                question.innerText = phrasesNon[clickCount];
+            }
+            clickCount++;
+            faisLeSenfuir(); // Le bouton s'échappe au clic
+        });
+
+        btnNon.addEventListener('mouseover', () => {
+            if (clickCount > 0) { // Dès qu'elle a essayé de cliquer une fois, il s'enfuit au survol
+                faisLeSenfuir();
+            }
+        });
 
         btnOui.addEventListener('click', () => {
             content.style.display = 'none';
