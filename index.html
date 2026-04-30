@@ -23,8 +23,8 @@
             color: #333;
             margin-bottom: 30px;
             padding: 0 20px;
-            height: 120px; /* Un peu plus haut pour le poème */
-            z-index: 1000; /* Toujours au-dessus */
+            height: 120px;
+            z-index: 1000;
             position: relative;
         }
 
@@ -35,6 +35,7 @@
             justify-content: center;
             width: 100%;
             position: relative;
+            min-height: 200px;
         }
 
         button {
@@ -45,13 +46,13 @@
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
+            transition: transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
         }
 
         #btnOui { 
             background-color: #ff4757; 
             color: white; 
-            z-index: 10; 
+            z-index: 500; /* Plus haut que le Non au début */
             position: relative; 
         }
 
@@ -59,7 +60,8 @@
             background-color: #747d8c; 
             color: white; 
             position: relative; 
-            z-index: 500; /* Plus haut que le Oui pour rester cliquable */
+            z-index: 100; /* Dessous le Oui pour la difficulté */
+            transition: left 0.3s ease, top 0.3s ease, transform 0.2s;
         }
 
         #messageFinal {
@@ -136,11 +138,20 @@
         ];
 
         function faisLeSenfuir() {
-            const margin = 100;
-            const x = Math.random() * (window.innerWidth - btnNon.offsetWidth - margin);
-            const y = Math.random() * (window.innerHeight - btnNon.offsetHeight - margin);
+            // Passe en fixed seulement au premier mouvement pour la fluidité
+            if (btnNon.style.position !== 'fixed') {
+                const rect = btnNon.getBoundingClientRect();
+                btnNon.style.left = rect.left + 'px';
+                btnNon.style.top = rect.top + 'px';
+                btnNon.style.position = 'fixed';
+                btnNon.style.margin = '0';
+                btnNon.style.zIndex = '3000'; // Passe au premier plan pour qu'elle le voit fuir
+            }
+
+            const padding = 100;
+            const x = Math.random() * (window.innerWidth - btnNon.offsetWidth - padding);
+            const y = Math.random() * (window.innerHeight - btnNon.offsetHeight - padding);
             
-            btnNon.style.position = 'fixed';
             btnNon.style.left = x + 'px';
             btnNon.style.top = y + 'px';
         }
@@ -148,11 +159,8 @@
         btnNon.addEventListener('click', () => {
             if (clickCount < phrasesNon.length) {
                 question.innerHTML = phrasesNon[clickCount];
-                
-                // Croissance plus douce (0.2) pour ne pas tout cacher
                 scaleOui += 0.2;
                 btnOui.style.transform = `scale(${scaleOui})`;
-                
                 clickCount++;
                 
                 if (clickCount === phrasesNon.length) {
