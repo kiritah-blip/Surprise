@@ -23,8 +23,9 @@
             color: #333;
             margin-bottom: 30px;
             padding: 0 20px;
-            height: 100px;
-            z-index: 1;
+            height: 120px; /* Un peu plus haut pour le poème */
+            z-index: 1000; /* Toujours au-dessus */
+            position: relative;
         }
 
         .buttons {
@@ -33,6 +34,7 @@
             align-items: center;
             justify-content: center;
             width: 100%;
+            position: relative;
         }
 
         button {
@@ -46,8 +48,19 @@
             transition: transform 0.2s;
         }
 
-        #btnOui { background-color: #ff4757; color: white; z-index: 100; position: relative; }
-        #btnNon { background-color: #747d8c; color: white; position: relative; z-index: 50; }
+        #btnOui { 
+            background-color: #ff4757; 
+            color: white; 
+            z-index: 10; 
+            position: relative; 
+        }
+
+        #btnNon { 
+            background-color: #747d8c; 
+            color: white; 
+            position: relative; 
+            z-index: 500; /* Plus haut que le Oui pour rester cliquable */
+        }
 
         #messageFinal {
             display: none;
@@ -58,7 +71,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             max-width: 85%;
             animation: pop 0.8s ease-out;
-            z-index: 200;
+            z-index: 2000;
         }
 
         .final-title { font-size: 2.2rem; color: #ff4757; margin-bottom: 15px; }
@@ -74,7 +87,7 @@
             position: absolute;
             width: 8px; height: 8px;
             animation: fall 3s linear forwards;
-            z-index: 150;
+            z-index: 1500;
         }
 
         @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
@@ -118,35 +131,28 @@
             "Je siffle la fin de la récré, mademoiselle la surveillante !",
             "T'as grandi à Strasbourg, t'as le cœur tendre normalement !",
             "Le héros de ton livre dirait OUI, c'est certain !",
-            "Avec un petit poème : Même l'impossible à sa poésie, en effet ton visage restera gravé dans mes plus beau vers",
+            "Avec un petit poème : Même l'impossible a sa poésie, en effet ton visage restera gravé dans mes plus beaux vers",
             "Entre collègue de Bafa tu peux bien me pardonner 😉",
         ];
 
         function faisLeSenfuir() {
             const margin = 100;
-            const ouiRect = btnOui.getBoundingClientRect();
-            let newX, newY;
+            const x = Math.random() * (window.innerWidth - btnNon.offsetWidth - margin);
+            const y = Math.random() * (window.innerHeight - btnNon.offsetHeight - margin);
             
-            // On cherche une position qui n'est pas sur le bouton Oui
-            do {
-                newX = Math.random() * (window.innerWidth - btnNon.offsetWidth - margin);
-                newY = Math.random() * (window.innerHeight - btnNon.offsetHeight - margin);
-            } while (
-                // Tant que la position est trop proche du centre (bouton Oui)
-                Math.abs(newX - (window.innerWidth/2)) < 200 && 
-                Math.abs(newY - (window.innerHeight/2)) < 200
-            );
-
             btnNon.style.position = 'fixed';
-            btnNon.style.left = newX + 'px';
-            btnNon.style.top = newY + 'px';
+            btnNon.style.left = x + 'px';
+            btnNon.style.top = y + 'px';
         }
 
         btnNon.addEventListener('click', () => {
             if (clickCount < phrasesNon.length) {
                 question.innerHTML = phrasesNon[clickCount];
-                scaleOui += 0.4;
+                
+                // Croissance plus douce (0.2) pour ne pas tout cacher
+                scaleOui += 0.2;
                 btnOui.style.transform = `scale(${scaleOui})`;
+                
                 clickCount++;
                 
                 if (clickCount === phrasesNon.length) {
