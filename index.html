@@ -23,6 +23,7 @@
             color: #333;
             margin-bottom: 30px;
             padding: 0 20px;
+            height: 80px;
             transition: all 0.3s;
         }
 
@@ -31,6 +32,8 @@
             gap: 20px;
             align-items: center;
             justify-content: center;
+            width: 100%;
+            height: 100px;
         }
 
         button {
@@ -45,7 +48,7 @@
         }
 
         #btnOui { background-color: #ff4757; color: white; z-index: 10; }
-        #btnNon { background-color: #747d8c; color: white; position: relative; }
+        #btnNon { background-color: #747d8c; color: white; position: relative; z-index: 5; }
 
         #messageFinal {
             display: none;
@@ -110,36 +113,43 @@
 
         const phrasesNon = [
             "T'es sérieuse ? 🥺",
-            "Entre collègue de Bafa tu peux bien me pardonner 😉",
+            "Même avec ton BAFA tu ne peux pas être aussi dure ! 😉",
             "Je siffle la fin de la récré, m'dame la surveillante !",
-            "Allez, dis OUI pour le Border Collie !",
             "T'as grandi à Strasbourg, t'as le cœur tendre normalement !",
-            "Ok, je t'envoie un Loup Tchécoslovaque pour te convaincre...",
-            "Le héros de ton livre dirait OUI, c'est certain !"
+            "Le héros de ton livre dirait OUI, c'est certain !",
+            "Entre collègue de Bafa tu peux bien me pardonner 😉"
         ];
 
         function faisLeSenfuir() {
-            const padding = 50;
-            const x = padding + Math.random() * (window.innerWidth - btnNon.offsetWidth - padding * 2);
-            const y = padding + Math.random() * (window.innerHeight - btnNon.offsetHeight - padding * 2);
-            btnNon.style.position = 'absolute';
+            const padding = 100;
+            const x = Math.random() * (window.innerWidth - btnNon.offsetWidth - padding);
+            const y = Math.random() * (window.innerHeight - btnNon.offsetHeight - padding);
+            btnNon.style.position = 'fixed';
             btnNon.style.left = x + 'px';
             btnNon.style.top = y + 'px';
         }
 
         btnNon.addEventListener('click', () => {
-            scaleOui += 0.5;
-            btnOui.style.transform = `scale(${scaleOui})`;
-            
             if (clickCount < phrasesNon.length) {
+                // On change le texte
                 question.innerText = phrasesNon[clickCount];
+                
+                // On fait grossir le OUI
+                scaleOui += 0.4;
+                btnOui.style.transform = `scale(${scaleOui})`;
+                
+                clickCount++;
+                
+                // Si on vient d'afficher la dernière phrase, on active l'esquive
+                if (clickCount === phrasesNon.length) {
+                    faisLeSenfuir();
+                }
             }
-            clickCount++;
-            faisLeSenfuir(); // Le bouton s'échappe au clic
         });
 
+        // L'esquive au survol : Active SEULEMENT à la dernière phrase
         btnNon.addEventListener('mouseover', () => {
-            if (clickCount > 0) { // Dès qu'elle a essayé de cliquer une fois, il s'enfuit au survol
+            if (clickCount >= phrasesNon.length) {
                 faisLeSenfuir();
             }
         });
