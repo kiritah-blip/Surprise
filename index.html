@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise pour toi ! 🎁</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5; /* Un gris bleuté plus moderne */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        #question {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 30px;
+            padding: 0 20px;
+            transition: all 0.3s;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        #btnOui {
+            background-color: #ff4757;
+            color: white;
+            z-index: 10;
+        }
+
+        #btnNon {
+            background-color: #747d8c;
+            color: white;
+            position: relative;
+        }
+
+        #messageFinal {
+            display: none;
+            animation: pop 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        .img-cake { font-size: 80px; margin-bottom: 20px; }
+
+        @keyframes pop {
+            0% { transform: scale(0); rotate: -10deg; }
+            100% { transform: scale(1); rotate: 0deg; }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: fall 3s linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="content">
+        <h1 id="question">On m'a dit que c'était ton anniversaire le 27... <br>Tu me pardonnes mon retard de 4 jours ? 😇</h1>
+        <div class="buttons">
+            <button id="btnOui">OUI ❤️</button>
+            <button id="btnNon">NON 😡</button>
+        </div>
+    </div>
+
+    <div id="messageFinal">
+        <div class="img-cake">🎂</div>
+        <h1 style="color: #ff4757;">Joyeux Anniversaire (en retard) !</h1>
+        <p style="font-size: 1.4rem; color: #555;">Super content de t'avoir rencontrée sur Kingshot depuis 4 jours... <br> Prête pour notre prochaine partie ? ✨</p>
+    </div>
+
+    <script>
+        const btnOui = document.getElementById('btnOui');
+        const btnNon = document.getElementById('btnNon');
+        const question = document.getElementById('question');
+        const content = document.getElementById('content');
+        const messageFinal = document.getElementById('messageFinal');
+
+        let clickCount = 0;
+        let scaleOui = 1;
+
+        const phrasesNon = [
+            "T'es sérieuse ? 🥺",
+            "Même pour un cadeau Kingshot ?",
+            "Allez, j'avais pas assez de munitions !",
+            "Je vais bouder...",
+            "Regarde comme le bouton OUI est beau !",
+            "Ok, je quitte la partie si c'est non 🏃‍♂️"
+        ];
+
+        btnNon.addEventListener('click', () => {
+            scaleOui += 0.5;
+            btnOui.style.transform = `scale(${scaleOui})`;
+            
+            if (clickCount < phrasesNon.length) {
+                question.innerText = phrasesNon[clickCount];
+            }
+            clickCount++;
+            faisLeSenfuir();
+        });
+
+        btnNon.addEventListener('mouseover', () => {
+            if (clickCount > 1) { 
+                faisLeSenfuir();
+            }
+        });
+
+        function faisLeSenfuir() {
+            const x = Math.random() * (window.innerWidth - btnNon.offsetWidth);
+            const y = Math.random() * (window.innerHeight - btnNon.offsetHeight);
+            btnNon.style.position = 'absolute';
+            btnNon.style.left = x + 'px';
+            btnNon.style.top = y + 'px';
+        }
+
+        btnOui.addEventListener('click', () => {
+            content.style.display = 'none';
+            messageFinal.style.display = 'block';
+            document.body.style.backgroundColor = "#fff";
+            lancerConfettis();
+        });
+
+        function lancerConfettis() {
+            const colors = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#ffffff'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-5vh';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                confetti.style.opacity = Math.random();
+                document.body.appendChild(confetti);
+            }
+        }
+    </script>
+</body>
+</html>
